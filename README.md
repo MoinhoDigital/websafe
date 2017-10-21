@@ -15,8 +15,8 @@ or
 
 ## API
 
-### Initialization
-- `init` - takes care of basic bootstrapping: [initialises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappinitialise), [authorises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappauthorise) and [connects](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappconnectauthorised)
+### `init({appInfo}, [permissions], [ownContainer])`
+takes care of basic bootstrapping: [initialises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappinitialise), [authorises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappauthorise) and [connects](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappconnectauthorised)
 
 ### Bootstrapping
 - `auth` - checks if user has an account corresponding to a public id and if not create one:   [checks for access](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappcanaccesscontainer), [gets containers](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappgetcontainer) (`_public` and `_publicNames`), [encrypts public id](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafemutabledataencryptkey), ...
@@ -25,7 +25,7 @@ or
 
 - `setupService`
 
-### GET Mutable Data
+### `get([appHandle], [serviceName], [typeTag])`
 
 ### PUT Mutable Data
 

@@ -11,6 +11,10 @@ export default async function (appInfo, permissions, ownContainer) {
     // Get authorised session
     await window.safeApp.connectAuthorised(appHandle, authUri)
     console.log('The app was authorised & a session was created with the network')
+    return {
+      appHandle,
+      authUri
+    }
   } catch (err) {
     console.log(err)
   }
