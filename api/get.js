@@ -1,3 +1,4 @@
+
 export default async function (appHandle, serviceName, typeTag) {
   try {
     const serviceHash = await window.safeCrypto.sha3Hash(appHandle, serviceName)
@@ -12,6 +13,7 @@ export default async function (appHandle, serviceName, typeTag) {
   } catch (err) {
     if (err.code === -103) {
       console.log('Service not found.')
+      return null
     } else {
       console.dir(err)
     }
