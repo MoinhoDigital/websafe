@@ -133,6 +133,43 @@ const inboxData = await readTxInboxData(appHandle, pk, inboxInfo)
 // [Array]
 ```
 
+#### `fetchCoin(appHandle, coinInfo)`
+Fetches a coin's handle by using it's ID, returns coin's MD object and handle.
+```js
+const coinInfo = {
+    id:,
+    key:,
+    tagType:,
+}
+const { coin, coinHandle } = await fetchCoin(appHandle, coinInfo)
+//
+```
+
+#### `checkOwnership(appHandle, pk, coinId)`
+Check's ownership of certain coin using user's private key and coin id, returns coin's data.
+```js
+const { coin, coinHandle } = await fetchCoin(appHandle, coinInfo)
+let coinData = await checkOwnership(appHandle, pk, coin.buf.toString())
+//
+```
+
+#### `transferCoin(appHandle, pk, sk, {coinInfo}, recipient)`
+Changes coin ownership using `coinInfo` and `recipient`'s address, returns transaction id.
+```js
+const coinInfo = {
+    id: '6bbb7f94ed0bc4a9b99a008ccc0f537e4b54917eb81bfeca5f1124cd50a4d3d1',
+    key: '__coins',
+    tagType: 1012017
+}
+const transfer = await transferCoin(appHandle, pk, inbox.sk, coinInfo, 'Satoshi Nakamoto')
+```
+
+#### `removeTxInboxData(appHandle, pk, [txs], tagType)`
+Removes transaction from inbox data.
+
+
+#### `storeCoinsToWallet(appHandle, serialisedWallet, coins, key)`
+Store coins to wallet.
 
 ### Utils
 #### `encrypt(appHandle, input, pk)`
