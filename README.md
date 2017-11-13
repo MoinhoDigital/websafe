@@ -1,10 +1,9 @@
-# WebSafe - Abstracting common patterns for the SAFE Browser
+# Abstracting common patterns SAFE
 
-**Still coneceptualizing**
+[![npm](https://img.shields.io/npm/v/websafe.svg?style=flat-square)](https://www.npmjs.com/package/websafe)
 
-[MaidSafe](https://maidsafe.net) is a brilliant technology being developed since 2016 with the goal of making a fully decentralized and autonomaus web. Currently in **Alpha 2** it's still very difficult to combine it's API in order to create simple interactions, this library aims in abstracting such patterns for use any application for the [SAFE Browser](https://github.com/maidsafe/safe_browser).
-
-We will be using `await/async` functions, since they're are the cleanest way of writing and reading asynchronous code, and are native to the SAFE Browser.
+## Why?
+[MaidSafe](https://maidsafe.net) is a brilliant technology being developed since 2006 with the goal of making a fully decentralized and autonomaus web. Currently in **Alpha 2** it's still very difficult to combine it's API in order to create meaningful interactions. This library aims in abstracting useful patterns for using in any applications aiming for the [SAFE Browser](https://github.com/maidsafe/safe_browser) and mobile in the future by using [react-native-node](https://github.com/staltz/react-native-node).
 
 ## Usage
 `npm i websafe -S`
@@ -13,25 +12,182 @@ or
 
 `yarn add websafe`
 
+Now you can simply import individual functions to your project
+
+```js
+const { init } = require('safeweb')
+
+const { appHandle, authUri } = await init(appInfo, perms, true)
+
+```
+
+We will be using `await/async` functions, since they're are the cleanest way of writing and reading asynchronous code, and are native to the SAFE Browser.
+
 ## API
 
-### `init({appInfo}, [permissions], [ownContainer])`
-takes care of basic bootstrapping: [initialises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappinitialise), [authorises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappauthorise) and [connects](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappconnectauthorised)
+### Basic
+#### `init({appInfo}, {permissions}, ownContainer<bool>)`
+takes care of basic bootstrapping: [initialises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappinitialise), [authorises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappauthorise) and [connects](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappconnectauthorised). Return `appHandle` and `authUri` which are used in other functions.
 
-### Bootstrapping
-- `auth` - checks if user has an account corresponding to a public id and if not create one:   [checks for access](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappcanaccesscontainer), [gets containers](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappgetcontainer) (`_public` and `_publicNames`), [encrypts public id](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafemutabledataencryptkey), ...
+```js
+const appInfo = {
+    id: 'app.moinhodigital.0.1',
+    name: 'My App',
+    vendor: 'moinhodigital'
+}
 
-- `setupContainer`
+const perms = {
+    _public: ['Read', 'Insert', 'Update', 'Delete'],
+    _publicNames: ['Read', 'Insert', 'Update', 'Delete']
+}
 
-- `setupService`
+const { appHandle, authUri } = await init(appInfo, perms, true)
+```
 
-### `get([appHandle], [serviceName], [typeTag])`
+#### `get([appHandle], [serviceName], [typeTag])`
 
-### PUT Mutable Data
+#### `put([appHandle], [serviceName], [typeTag])`
 
-### GET Immutable Data
+### Wallet
+Mostly based on [safe-coins-wallet](https://github.com/bochaco/safe-coins-wallet) and [safe-faucet](https://github.com/bochaco/safe-faucet).
 
-### PUT Immutable Data
+#### `mintCoin(appHandle, {coinInfo}, pk)`
+Mints new coins and returns the new coin's id.
+
+```js
+coinInfo = {
+    owner: 'GENESIS',
+    key: 'coin-data',
+    tagType: 21082018
+}
+
+const coinXorName = await mintCoin(appHandle, pk, coinInfo)
+//662b9e526920183d5e8d098d489f40e353fe537daef51521b0abbf8cb1b92a74
+```
+
+#### `sendTxNotif(appHandle, pk, [coinIds], {assetInfo})`
+Send notification of a transaction to recipient, returns transaction id.
+```js
+const assetInfo = {
+    name: formData.asset,
+    key: '__tx_enc_pk',
+    tagType: 20082018
+}
+await sendTxNotif(appHandle, pk, coinIds, assetInfo)
+//
+```
+
+#### `createWallet(appHandle, pk, {walletInfo})`
+Creates a new wallet with users private key and wallet information, returns serialised handle for the mutable data.
+```js
+const walletInfo = {
+    name: 'Wallet',
+    description: 'Container to receive notifications for wallet transactions',
+    key: '__coins',
+    tagType: 1012017
+}
+const wallet = await createWallet(appHandle, pk, walletInfo)
+// 100,118,37,35,91,42,43,249,44...
+```
+
+#### `createTxInbox(appHandle, pk, {inboxInfo})`
+Cretes an container to store transactions for the wallet, returns private/public keys for the container.
+```js
+const inboxInfo = {
+    key: '__tx_enc_pk',
+    name: 'Transaction Inbox',
+    description: 'Container to receive notifications of transactions',
+    tagType: 20082018
+}
+// {
+//     pk: "d95571fd086a8e5d27c2dffe239cdeb70d971b0lu0ec860a8f672cfe7790915a",
+//     sk: "450dca921a295f55b6a214ffd2cpo221f2e30a91c4042cc874586911186f0efb"
+// }
+```
+
+#### `loadWalletData(appHandle, serialisedWallet, key)`
+Loads data from wallet using wallet serialised wallet handle and wallet key, returns data.
+```js
+const walletInfo = {
+    key: '__coins',
+} 
+const wallet = await createWallet(appHandle, input, walletInfo)
+const walletCoins = await loadWalletData(appHandle, wallet, walletInfo.key)
+```
+
+#### `readTxInboxData(appHandle, pk, {inboxInfo})`
+Reads transaction inbox data using user private key and inbox information.
+```js
+const inboxInfo = {
+    name: 'Transaction Inbox',
+    description: 'Container to receive notifications of transactions',
+    tagType: 20082018
+    key: '__tx_enc_pk',
+    metadataKey: '_metadata',
+    tagType: 20082018
+}
+const inbox = await createTxInbox(appHandle, input, inboxInfo)
+inboxInfo.encPk = inbox.pk
+inboxInfo.encSk = inbox.sk
+const inboxData = await readTxInboxData(appHandle, pk, inboxInfo)
+// [Array]
+```
+
+
+### Utils
+#### `encrypt(appHandle, input, pk)`
+Encrypts any input with the users private key.
+```js
+const encData = await encrypt(appHandle, input, pk)
+// ArrayBuffer()
+```
+
+#### `insertEntriesEncrypted(appHandle, mdHandle, {data})`
+Inserts encrypted data to mutation. Data is an object.
+```js
+const emptyData = {
+    coins: JSON.stringify([])
+}
+await insertEntriesEncrypted(appHandle, mdHandle, emptyData)
+```
+
+#### `genKeyPair(appHandle)`
+Generates a new public/private pair for the user.
+```js
+const encKeys = await genKeyPair(appHandle)
+// {
+//     pk: "d95571fd086a8e5d27c2dffe239cdeb70d971b0lu0ec860a8f672cfe7790915a",
+//     sk: "450dca921a295f55b6a214ffd2cpo221f2e30a91c4042cc874586911186f0efb"
+// }
+```
+
+#### `genXorName(appHandle, pk)`
+Generates a xor name using users private key.
+```js
+const xorName = await genXorName(appHandle, pk)
+// Array Buffer {}
+```
+
+#### `decrypt(appHandle, data, encPk, encSk)`
+Decrypts data using users encrypted public and secret keys, returns decrypted data.
+```js
+const decryptedTxs = await decryptTxs(appHandle, encryptedTxs, encPk, encSk)
+// [Array]
+```
+
+#### `genId()`
+```js
+const txId = genId(32)
+// 6121128e237df38bb4aff3152109cc415a8aff3255766c07a9c026df8a3cba61
+```
+
+
+
+## TODO
+
+#### GET Immutable Data
+
+#### PUT Immutable Data
 
 
 ## Contributing
