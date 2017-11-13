@@ -2,6 +2,7 @@ import init from './api/init'
 import auth from './api/auth'
 import get from './api/get'
 import put from './api/put'
+import post from './api/post'
 import createWallet from './api/wallet/createWallet'
 import loadWalletData from './api/wallet/loadWalletData'
 import sendTxNotif from './api/wallet/sendTxNotif'
@@ -15,7 +16,7 @@ import checkOwnership from './api/wallet/checkOwnership'
 import fetchCoin from './api/wallet/fetchCoin'
 
 export {
-    init, auth, get, put,
+    init, auth, get, put, post,
     mintCoin, createTxInbox, createWallet, loadWalletData,
     sendTxNotif, readTxInboxData, transferCoin, removeTxInboxData,
     storeCoinsToWallet, checkOwnership, fetchCoin

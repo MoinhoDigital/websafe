@@ -30,6 +30,19 @@ function | description
 `get(appHandle, 'serviceName', tagType)` | gets data for a mutable data service
 `put(appHandle, 'serviceName', typeTag, key, value)` | puts key/value pair on a service instance
 
+#### [Wallet API](#wallet)
+function | description
+------------ | -------------
+`createWallet(appHandle, pk, {walletInfo})` | creates a new wallet
+`mintCoin(appHandle, {coinInfo}, pk)` | creates a new single asset
+`sendTxNotif(appHandle, pk, [coinIds], {assetInfo})` | sends a notification to an inbox
+`createTxInbox(appHandle, pk, {inboxInfo})` | creates a new inbox for transactions
+`loadWalletData(appHandle, serialisedWallet, key)` | loads a wallet's data
+`readTxInboxData(appHandle, pk, {inboxInfo})` | reads transactions inbox data
+`fetchCoin(appHandle, coinInfo)` | fetches a specific's coin's information
+`checkOwnership(appHandle, pk, coinId)` | checks ownership of an asset
+
+
 ## Basic
 #### `init({appInfo}, {permissions}, ownContainer<bool>)`
 Bootstrs the application by: [initialising](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappinitialise), [authorising](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappauthorise) and [connecting](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappconnectauthorised). Returns `appHandle` and `authUri` which are used in other functions.
@@ -50,7 +63,7 @@ const { appHandle, authUri } = await init(appInfo, perms, true)
 ```
 
 #### `get(appHandle, 'serviceName', tagType)`
-Takes `serviceName` which is a string such as `'name-private-0101010101010101010'` and a tag type, which is a number greateer than [10.000](https://github.com/maidsafe/rfcs/blob/master/text/0003-reserved-names/0003-reserved-names.md).
+Takes `serviceName` which is a string such as `'name-private-0101010101010101010'` and a tag type, which is a number greater than [16000](https://github.com/maidsafe/rfcs/blob/master/text/0003-reserved-names/0003-reserved-names.md).
 
 #### `put(appHandle, 'serviceName', typeTag, key, value)`
 Puts a single key/value pair to a service's mutable data instance.
@@ -58,6 +71,19 @@ Puts a single key/value pair to a service's mutable data instance.
 
 ## Wallet
 Mostly based on [safe-coins-wallet](https://github.com/bochaco/safe-coins-wallet) and [safe-faucet](https://github.com/bochaco/safe-faucet).
+
+#### `createWallet(appHandle, pk, {walletInfo})`
+Creates a new wallet with an input public key and wallet information, returns serialised handle for the mutable data.
+```js
+const walletInfo = {
+    name: 'Wallet',
+    description: 'Container to receive notifications for wallet transactions',
+    key: '__coins',
+    tagType: 1012017
+}
+const wallet = await createWallet(appHandle, pk, walletInfo)
+// 100,118,37,35,91,42,43,249,44...
+```
 
 #### `mintCoin(appHandle, {coinInfo}, pk)`
 Mints new coins and returns the new coin's id.
@@ -83,19 +109,6 @@ const assetInfo = {
 }
 await sendTxNotif(appHandle, pk, coinIds, assetInfo)
 //
-```
-
-#### `createWallet(appHandle, pk, {walletInfo})`
-Creates a new wallet with users private key and wallet information, returns serialised handle for the mutable data.
-```js
-const walletInfo = {
-    name: 'Wallet',
-    description: 'Container to receive notifications for wallet transactions',
-    key: '__coins',
-    tagType: 1012017
-}
-const wallet = await createWallet(appHandle, pk, walletInfo)
-// 100,118,37,35,91,42,43,249,44...
 ```
 
 #### `createTxInbox(appHandle, pk, {inboxInfo})`
@@ -124,7 +137,7 @@ const walletCoins = await loadWalletData(appHandle, wallet, walletInfo.key)
 ```
 
 #### `readTxInboxData(appHandle, pk, {inboxInfo})`
-Reads transaction inbox data using user private key and inbox information.
+Reads transaction inbox data using user public key and inbox information.
 ```js
 const inboxInfo = {
     name: 'Transaction Inbox',
@@ -154,7 +167,7 @@ const { coin, coinHandle } = await fetchCoin(appHandle, coinInfo)
 ```
 
 #### `checkOwnership(appHandle, pk, coinId)`
-Check's ownership of certain coin using user's private key and coin id, returns coin's data.
+Check's ownership of certain coin using user's public key and coin id, returns coin's data.
 ```js
 const { coin, coinHandle } = await fetchCoin(appHandle, coinInfo)
 let coinData = await checkOwnership(appHandle, pk, coin.buf.toString())
@@ -181,7 +194,7 @@ Store coins to wallet.
 
 ## Utils
 #### `encrypt(appHandle, input, pk)`
-Encrypts any input with the users private key.
+Encrypts any input with the users public key.
 ```js
 const encData = await encrypt(appHandle, input, pk)
 // ArrayBuffer()
@@ -207,7 +220,7 @@ const encKeys = await genKeyPair(appHandle)
 ```
 
 #### `genXorName(appHandle, pk)`
-Generates a xor name using users private key.
+Generates a xor name using users public key.
 ```js
 const xorName = await genXorName(appHandle, pk)
 // Array Buffer {}

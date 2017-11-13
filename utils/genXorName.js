@@ -1,1 +1,1 @@
-export default (appHandle, id) => window.safeCrypto.sha3Hash(appHandle, id)
+export default async (appHandle, id) => window.safeCrypto.sha3Hash(appHandle, id)

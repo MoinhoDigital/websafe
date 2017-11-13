@@ -1,14 +1,20 @@
+import fromArrayBuffer from '../utils/fromArrayBuffer'
 
-export default async function (appHandle, serviceName, typeTag) {
-  let data
+export default async function (appHandle, serviceName, typeTag, metadata = false) {
+  let data = []
   try {
     const serviceHash = await window.safeCrypto.sha3Hash(appHandle, serviceName)
     const serviceHandle = await window.safeMutableData.newPublic(appHandle, serviceHash, typeTag)
     const entriesHandle = await window.safeMutableData.getEntries(serviceHandle)
-    await window.safeMutableDataEntries.forEach(entriesHandle, (key, value) => {
-      console.log('Key', key)
-      console.log('Value', value)
-      data.push({ [key]: value })
+    await window.safeMutableDataEntries.forEach(entriesHandle, async (key, value) => {
+      const rawValue = await fromArrayBuffer(value.buf)
+      if (metadata) {
+        data.push({ [key]: rawValue })
+      } else {
+        if (fromArrayBuffer(key) !== '_metadata') {
+          data.push({ [key]: rawValue })
+        }
+      }
     })
     await window.safeMutableDataEntries.free(entriesHandle)
     await window.safeMutableData.free(serviceHandle)
