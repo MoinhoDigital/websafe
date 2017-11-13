@@ -28,7 +28,7 @@ function | description
 ------------ | -------------
 `init({appInfo}, {permissions}, ownContainer<bool>)` | boostrapping application to the SAFE network
 `get(appHandle, 'serviceName', tagType)` | gets data for a mutable data service
-`put(appHandle, 'serviceName', typeTag, key, value)` | puts key/value pair on a service instance
+`put(appHandle, {serviceInfo}, [data], isPrivate<bool>)` | puts key/value pair on a service instance
 
 #### [Wallet API](#wallet)
 function | description
@@ -62,11 +62,27 @@ const perms = {
 const { appHandle, authUri } = await init(appInfo, perms, true)
 ```
 
-#### `get(appHandle, 'serviceName', tagType)`
-Takes `serviceName` which is a string such as `'name-private-0101010101010101010'` and a tag type, which is a number greater than [16000](https://github.com/maidsafe/rfcs/blob/master/text/0003-reserved-names/0003-reserved-names.md).
+#### `get(appHandle, 'serviceName', typeTag, metadata<bool>)`
+Takes `serviceName` which is a string such as `'name-private-0101010101010101010'` or `'ownContainer'` if you want to use the app's `ownContainer`, a tag type, which is a number greater than [16000](https://github.com/maidsafe/rfcs/blob/master/text/0003-reserved-names/0003-reserved-names.md) and a boolean if you want to show metadata, defaults to `false`.
+```js
+const serviceInfo = {
+  key: 'ownContainer',
+  tagType: 29001
+}
+await get(state.appHandle, serviceInfo.key, serviceInfo.tagType)
+```
 
-#### `put(appHandle, 'serviceName', typeTag, key, value)`
-Puts a single key/value pair to a service's mutable data instance.
+#### `put(appHandle, {serviceInfo}, [data], isPrivate<bool>)`
+If non existing creates a new mutable data instance with the `serviceInfo` object. Return the data object if sucessful.
+```js
+const serviceInfo = {
+  key: 'ownContainer',
+  tagType: 29001,
+  name: 'Service name',
+  description: 'Service description'
+}
+await put(state.appHandle, serviceInfo, { hello: 'world' })
+```
 
 
 ## Wallet

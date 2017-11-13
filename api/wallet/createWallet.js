@@ -21,6 +21,6 @@ export default async (appHandle, pk, walletInfo) => {
     const walletArr = new Uint8Array(serialisedWallet)
     return walletArr.toString()
   } catch (err) {
-    console.log('Erorr', err)
+    console.log('Error creating wallet', err)
   }
 }

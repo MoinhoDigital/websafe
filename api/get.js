@@ -3,8 +3,13 @@ import fromArrayBuffer from '../utils/fromArrayBuffer'
 export default async function (appHandle, serviceName, typeTag, metadata = false) {
   let data = []
   try {
-    const serviceHash = await window.safeCrypto.sha3Hash(appHandle, serviceName)
-    const serviceHandle = await window.safeMutableData.newPublic(appHandle, serviceHash, typeTag)
+    let serviceHandle
+    if (serviceName === 'ownContainer') {
+      serviceHandle = await window.safeApp.getOwnContainer(appHandle)
+    } else {
+      const serviceHash = await window.safeCrypto.sha3Hash(appHandle, serviceName)
+      serviceHandle = await window.safeMutableData.newPublic(appHandle, serviceHash, typeTag)
+    }
     const entriesHandle = await window.safeMutableData.getEntries(serviceHandle)
     await window.safeMutableDataEntries.forEach(entriesHandle, async (key, value) => {
       const rawValue = await fromArrayBuffer(value.buf)
