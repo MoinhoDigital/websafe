@@ -8,6 +8,6 @@ export default async function (appHandle, serviceName, typeTag, key, value) {
     await window.safeMutableDataMutation.free(mutationHandle)
     await window.safeMutableData.free(serviceHandle)
   } catch (err) {
-    console.log('Error', err)
+    console.log('Error on PUT', err)
   }
 }

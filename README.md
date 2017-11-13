@@ -1,11 +1,9 @@
-# Abstracting common patterns SAFE
-
 [![npm](https://img.shields.io/npm/v/websafe.svg?style=flat-square)](https://www.npmjs.com/package/websafe)
 
-## Why?
-[MaidSafe](https://maidsafe.net) is a brilliant technology being developed since 2006 with the goal of making a fully decentralized and autonomaus web. Currently in **Alpha 2** it's still very difficult to combine it's API in order to create meaningful interactions. This library aims in abstracting useful patterns for using in any applications aiming for the [SAFE Browser](https://github.com/maidsafe/safe_browser) and mobile in the future by using [react-native-node](https://github.com/staltz/react-native-node).
+# Why?
+[MaidSafe](https://maidsafe.net) is an awesome technology being developed since 2006 with the goal of making a fully decentralized and autonomaus web. Currently in **Alpha 2** it's still very difficult to combine it's API in order to create meaningful interactions. This library aims in abstracting useful patterns for using in any applications aiming for the [SAFE Browser](https://github.com/maidsafe/safe_browser).
 
-## Usage
+# Usage
 `npm i websafe -S`
 
 or
@@ -23,11 +21,18 @@ const { appHandle, authUri } = await init(appInfo, perms, true)
 
 We will be using `await/async` functions, since they're are the cleanest way of writing and reading asynchronous code, and are native to the SAFE Browser.
 
-## API
+# API
 
-### Basic
+#### [Basics](#basic)
+function | description
+------------ | -------------
+`init({appInfo}, {permissions}, ownContainer<bool>)` | boostrapping application to the SAFE network
+`get(appHandle, 'serviceName', tagType)` | gets data for a mutable data service
+`put(appHandle, 'serviceName', typeTag, key, value)` | puts key/value pair on a service instance
+
+## Basic
 #### `init({appInfo}, {permissions}, ownContainer<bool>)`
-takes care of basic bootstrapping: [initialises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappinitialise), [authorises](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappauthorise) and [connects](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappconnectauthorised). Return `appHandle` and `authUri` which are used in other functions.
+Bootstrs the application by: [initialising](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappinitialise), [authorising](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappauthorise) and [connecting](http://docs.maidsafe.net/beaker-plugin-safe-app/#windowsafeappconnectauthorised). Returns `appHandle` and `authUri` which are used in other functions.
 
 ```js
 const appInfo = {
@@ -44,11 +49,14 @@ const perms = {
 const { appHandle, authUri } = await init(appInfo, perms, true)
 ```
 
-#### `get([appHandle], [serviceName], [typeTag])`
+#### `get(appHandle, 'serviceName', tagType)`
+Takes `serviceName` which is a string such as `'name-private-0101010101010101010'` and a tag type, which is a number greateer than [10.000](https://github.com/maidsafe/rfcs/blob/master/text/0003-reserved-names/0003-reserved-names.md).
 
-#### `put([appHandle], [serviceName], [typeTag])`
+#### `put(appHandle, 'serviceName', typeTag, key, value)`
+Puts a single key/value pair to a service's mutable data instance.
 
-### Wallet
+
+## Wallet
 Mostly based on [safe-coins-wallet](https://github.com/bochaco/safe-coins-wallet) and [safe-faucet](https://github.com/bochaco/safe-faucet).
 
 #### `mintCoin(appHandle, {coinInfo}, pk)`
@@ -171,7 +179,7 @@ Removes transaction from inbox data.
 #### `storeCoinsToWallet(appHandle, serialisedWallet, coins, key)`
 Store coins to wallet.
 
-### Utils
+## Utils
 #### `encrypt(appHandle, input, pk)`
 Encrypts any input with the users private key.
 ```js
@@ -220,7 +228,7 @@ const txId = genId(32)
 
 
 
-## TODO
+# TODO
 
 #### GET Immutable Data
 
