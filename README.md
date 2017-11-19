@@ -72,7 +72,7 @@ const serviceInfo = {
 await get(state.appHandle, serviceInfo.key, serviceInfo.tagType)
 ```
 
-#### `put(appHandle, {serviceInfo}, [data], isPrivate<bool>)`
+#### `insert(appHandle, {serviceInfo}, [data], isPrivate<bool>)`
 If non existing creates a new mutable data instance with the `serviceInfo` object. Return the data object if sucessful.
 ```js
 const serviceInfo = {
@@ -81,7 +81,7 @@ const serviceInfo = {
   name: 'Service name',
   description: 'Service description'
 }
-await put(state.appHandle, serviceInfo, { hello: 'world' })
+await insert(state.appHandle, serviceInfo, { hello: 'world' })
 ```
 
 

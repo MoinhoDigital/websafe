@@ -1,11 +1,12 @@
 import { genId, encrypt, genXorName } from '../../utils'
 
-export default async function (appHandle, pk, coinIds, assetInfo) {
+export default async function (appHandle, pk, coinIds, assetInfo, type) {
   const { name, key, tagType } = assetInfo
   const txId = genId()
   let tx = {
     coinIds,
     name,
+    type,
     date: (new Date()).toUTCString()
   }
 

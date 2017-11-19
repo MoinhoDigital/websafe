@@ -31,7 +31,7 @@ export default async function (appHandle, serviceInfo, data, isPrivate = false) 
     await window.safeMutableData.free(serviceHandle)
     return data
   } catch (err) {
-    console.log('Error on PUT', err)
+    console.log('Error on INSERT', err)
     return undefined
   }
 }
