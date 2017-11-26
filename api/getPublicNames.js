@@ -7,6 +7,7 @@
  */
 
 export default async (appHandle) => {
+  let publicNames = []
   try {
     const access = await window.safeApp.canAccessContainer(appHandle, '_publicNames', ['Read'])
     if (access) {
@@ -16,7 +17,11 @@ export default async (appHandle) => {
       if (keysLength === 0) {
         return []
       }
-      await window.safeMutableDataKeys.forEach(keysHandle, (key) => console.log('Key: ', key.toString()))
+      await window.safeMutableDataKeys.forEach(keysHandle, (key) => {
+        console.log('Key', key.toString())
+        publicNames.push(key.toString())
+      })
+      return publicNames
     }
   } catch (err) {
     console.log('Error on getting publicNames', err)

@@ -1,23 +1,28 @@
 import fromArrayBuffer from '../utils/fromArrayBuffer'
+import genXorName from '../utils/genXorName'
 
-export default async function (appHandle, serviceName, typeTag, metadata = false) {
+export default async function (appHandle, serviceName, typeTag, key = null, metadata = false) {
   let data = []
   try {
     let serviceHandle
     if (serviceName === 'ownContainer') {
       serviceHandle = await window.safeApp.getOwnContainer(appHandle)
     } else {
-      const serviceHash = await window.safeCrypto.sha3Hash(appHandle, serviceName)
+      const serviceHash = await genXorName(appHandle, serviceName)
       serviceHandle = await window.safeMutableData.newPublic(appHandle, serviceHash, typeTag)
     }
     const entriesHandle = await window.safeMutableData.getEntries(serviceHandle)
-    await window.safeMutableDataEntries.forEach(entriesHandle, async (key, value) => {
-      const rawValue = await fromArrayBuffer(value.buf)
-      if (metadata) {
-        data.push({ [key]: rawValue })
+    await window.safeMutableDataEntries.forEach(entriesHandle, async (eKey, eValue) => {
+      const rawValue = await fromArrayBuffer(eValue.buf)
+      if (key === eKey) {
+        data = rawValue
       } else {
-        if (fromArrayBuffer(key) !== '_metadata') {
-          data.push({ [key]: rawValue })
+        if (metadata) {
+          data.push({ [eKey]: rawValue })
+        } else {
+          if (fromArrayBuffer(eKey) !== '_metadata') {
+            data.push({ [eKey]: rawValue })
+          }
         }
       }
     })
@@ -29,7 +34,7 @@ export default async function (appHandle, serviceName, typeTag, metadata = false
       console.log('Error on GET. Service not found.')
       return null
     } else {
-      console.dir('Error on GET:', err)
+      console.log('Error on GET:', err)
     }
   }
 }
