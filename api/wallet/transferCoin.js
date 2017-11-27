@@ -3,21 +3,22 @@ import checkOwnership from './checkOwnership'
 
 export default async (appHandle, pk, sk, coinInfo, recipient) => {
   try {
-    const { id, key } = coinInfo
-    console.log("Transfering coin's ownership in the network...", id, recipient)
+    const { xorName, key } = coinInfo
+    console.log("Transfering coin's ownership in the network...", xorName, recipient)
     const { coin, coinHandle } = await fetchCoin(appHandle, coinInfo)
-    console.log('Coin data', coin, coinHandle)
     let coinData = await checkOwnership(appHandle, coinHandle, pk, coin)
+    console.log('Coin data', coinData)
     coinData.owner = recipient
     coinData.prev_owner = pk
     console.log("Coin's new ownership: ", coinData)
     const mutHandle = await window.safeMutableData.newMutation(appHandle)
     await window.safeMutableDataMutation.update(mutHandle, key, JSON.stringify(coinData), coin.version + 1)
-    const ret = await window.safeMutableData.applyEntriesMutation(coinHandle, mutHandle)
+    await window.safeMutableData.applyEntriesMutation(coinHandle, mutHandle)
     window.safeMutableDataMutation.free(mutHandle)
     window.safeMutableData.free(coinHandle)
-    return ret
+    return true
   } catch (err) {
     console.log('Error transfering coin', err)
+    return false
   }
 }

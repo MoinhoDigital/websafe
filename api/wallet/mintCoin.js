@@ -1,7 +1,7 @@
-export default async function (appHandle, pk, coinInfo) {
+export default async function (appHandle, pk, coinInfo, asset) {
   try {
     const { owner, key, tagType } = coinInfo
-    const coin = { owner: pk, prev_owner: owner }
+    const coin = { owner: pk, prev_owner: owner, asset }
     const coinData = { [key]: JSON.stringify(coin) }
     const coinHandle = await window.safeMutableData.newRandomPublic(appHandle, tagType)
     await window.safeMutableData.quickSetup(coinHandle, coinData)
@@ -12,7 +12,10 @@ export default async function (appHandle, pk, coinInfo) {
     const nameAndTag = await window.safeMutableData.getNameAndTag(coinHandle)
     const coinXorName = nameAndTag.name.buffer.toString('hex')
     await window.safeMutableData.free(coinHandle)
-    return coinXorName
+    return {
+      xorName: coinXorName,
+      asset
+    }
   } catch (err) {
     console.log('Error minting coin', err)
     return err

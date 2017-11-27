@@ -18,7 +18,6 @@ export default async (appHandle) => {
         return []
       }
       await window.safeMutableDataKeys.forEach(keysHandle, (key) => {
-        console.log('Key', key.toString())
         publicNames.push(key.toString())
       })
       return publicNames

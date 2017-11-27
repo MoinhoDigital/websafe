@@ -22,8 +22,9 @@ export default async (appHandle, input) => {
     await window.safeMutableData.applyEntriesMutation(containerHandle, mutHandle)
     await window.safeMutableDataMutation.free(mutHandle)
     await window.safeMutableData.free(containerHandle)
-    return true
+    return { success: true }
   } catch (err) {
-    console.log('Error creating new Public Names', err)
+    console.log('Error creating new Public Name', err)
+    return { error: err }
   }
 }
