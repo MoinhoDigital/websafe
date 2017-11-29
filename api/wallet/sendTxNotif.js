@@ -24,6 +24,6 @@ export default async function (appHandle, pk, coinIds, inboxInfo, asset, type) {
     return txId
   } catch (err) {
     console.log('Error on sendTxNotif', err)
-    return err
+    return { error: err }
   }
 }

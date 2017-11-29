@@ -1,7 +1,11 @@
+// import genXorName from '../../utils/genXorName'
+
 export default async function (appHandle, pk, coinInfo, asset) {
   try {
     const { owner, key, tagType } = coinInfo
     const coin = { owner: pk, prev_owner: owner, asset }
+    // TODO: Implement coins with unique IDs
+    // const hashedAsset = await genXorName(appHandle, asset)
     const coinData = { [key]: JSON.stringify(coin) }
     const coinHandle = await window.safeMutableData.newRandomPublic(appHandle, tagType)
     await window.safeMutableData.quickSetup(coinHandle, coinData)
