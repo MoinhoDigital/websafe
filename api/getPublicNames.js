@@ -1,10 +1,4 @@
-/**
- * Create new Public Name
- * - Create new Public Mutable Data with sha3hash of publicName as its XORName
- * - Create new entry with publicName as key and XORName as its value
- * - Insert this entry within the _publicNames container
- * @param {string} publicName the public name
- */
+import fromArrayBuffer from '../utils/fromArrayBuffer'
 
 export default async (appHandle) => {
   let publicNames = []
@@ -17,8 +11,9 @@ export default async (appHandle) => {
       if (keysLength === 0) {
         return []
       }
-      await window.safeMutableDataKeys.forEach(keysHandle, (key) => {
-        publicNames.push(key.toString())
+      await window.safeMutableDataKeys.forEach(keysHandle, async (eKey) => {
+        const decryptedKey = fromArrayBuffer(eKey)
+        publicNames.push(decryptedKey)
       })
       return publicNames
     }

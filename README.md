@@ -24,15 +24,15 @@ We will be using `await/async` functions, since they're are the cleanest way of 
 # API
 
 #### [Basics](#basic)
-function | description
------------- | -------------
-`init({appInfo}, {permissions}, ownContainer<bool>)` | boostrapping application to the SAFE network
+function | description | returns
+------------ | ------------- | -------------
+`init({appInfo}, {permissions}, ownContainer<bool>)` | boostrapping application to the SAFE network | `appHandle` and `authUri`
 `get(appHandle, 'serviceName', tagType)` | gets data for a mutable data service
 `put(appHandle, {serviceInfo}, [data], isPrivate<bool>)` | puts key/value pair on a service instance
 
 #### [Wallet API](#wallet)
-function | description
------------- | -------------
+function | description | returns
+------------ | ------------- | -------------
 `createWallet(appHandle, pk, {walletInfo})` | creates a new wallet
 `mintCoin(appHandle, {coinInfo}, pk)` | creates a new single asset
 `sendTxNotif(appHandle, pk, [coinIds], {assetInfo})` | sends a notification to an inbox
